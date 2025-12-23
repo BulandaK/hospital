@@ -1,5 +1,7 @@
 package com.example.medical_clinic.services;
 
+import com.example.medical_clinic.exception.PatientAlreadyExistsException;
+import com.example.medical_clinic.exception.PatientNotFoundException;
 import com.example.medical_clinic.model.Patient;
 import com.example.medical_clinic.repository.PatientRepository;
 import org.springframework.stereotype.Service;
@@ -19,40 +21,37 @@ public class PatientService {
         return patientRepository.getAll();
     }
 
-    public Optional<Patient> getByEmail(String email) {
-        return patientRepository.getByEmail(email);
+    public Patient getByEmail(String email) {
+        return patientRepository.getByEmail(email)
+                .orElseThrow(() -> new PatientNotFoundException("Pacjent o mailu " + email + " nie istnieje"));
     }
 
-    public Optional<Patient> add(Patient patient) {
-
+    public Patient add(Patient patient) {
         if (userExists(patient.getEmail())) {
-            System.out.println("LOG:użytkownik już istnieje");
-            return Optional.empty();
+            throw new PatientAlreadyExistsException("Pacjent juz istnieje!");
         }
 
         patientRepository.add(patient);
-        return Optional.of(patient);
+        return patient;
     }
 
-    public boolean removeByEmail(String email) {
-        boolean isDeleted = patientRepository.deleteByEmail(email);
-        if (!isDeleted) {
-            System.out.println("LOG: nie znaleziono pacjenta o mailu: " + email);
+    public void removeByEmail(String email) {
+        if (!patientRepository.deleteByEmail(email)) {
+            throw new PatientNotFoundException("nie znaleziono pacjenta o mailu: " + email);
         }
-        return isDeleted;
     }
 
-    public Optional<Patient> updateByEmail(String email, Patient updated) {
-        return patientRepository.getByEmail(email)
-                .map(existingPatient -> {
-                    existingPatient.setPassword(updated.getPassword());
-                    existingPatient.setIdCardNo(updated.getIdCardNo());
-                    existingPatient.setFirstName(updated.getFirstName());
-                    existingPatient.setLastName(updated.getLastName());
-                    existingPatient.setPhoneNumber(updated.getPhoneNumber());
-                    existingPatient.setBirthday(updated.getBirthday());
-                    return existingPatient;
-                });
+    public Patient updateByEmail(String email, Patient updated) {
+        Patient source = getByEmail(email);
+
+        source.setPassword(updated.getPassword());
+        source.setIdCardNo(updated.getIdCardNo());
+        source.setFirstName(updated.getFirstName());
+        source.setLastName(updated.getLastName());
+        source.setPhoneNumber(updated.getPhoneNumber());
+        source.setBirthday(updated.getBirthday());
+
+        return source;
     }
 
     private boolean userExists(String email) {

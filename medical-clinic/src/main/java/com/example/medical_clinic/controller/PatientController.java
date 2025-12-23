@@ -26,35 +26,26 @@ public class PatientController {
     }
 
     @GetMapping("/{email}")
-    public ResponseEntity<Patient> getByEmail(@PathVariable String email) {
-        return patientSerivce.getByEmail(email)
-                .map(patient -> ResponseEntity.status(HttpStatus.OK).body(patient))
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-
+    @ResponseStatus(HttpStatus.OK)
+    public Patient getByEmail(@PathVariable String email) {
+        return patientSerivce.getByEmail(email);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Patient> create(@RequestBody Patient patient) {
-        return patientSerivce.add(patient)
-                .map(patient1 -> ResponseEntity.status(HttpStatus.CREATED).body(patient1))
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.CONFLICT).build());
+    @ResponseStatus(HttpStatus.CREATED)
+    public Patient create(@RequestBody Patient patient) {
+        return patientSerivce.add(patient);
     }
 
     @DeleteMapping("/{email}")
-    public ResponseEntity<Void> delete(@PathVariable String email) {
-        boolean deletedPatient = patientSerivce.removeByEmail(email);
-
-        if (deletedPatient) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable String email) {
+        patientSerivce.removeByEmail(email);
     }
 
     @PutMapping("/{email}")
-    public ResponseEntity<Patient> update(@PathVariable String email, @RequestBody Patient patient) {
-        return patientSerivce.updateByEmail(email, patient)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    @ResponseStatus(HttpStatus.OK)
+    public Patient update(@PathVariable String email, @RequestBody Patient patient) {
+        return patientSerivce.updateByEmail(email, patient);
     }
 }
