@@ -1,24 +1,29 @@
 package com.example.medical_clinic.services;
 
+import com.example.medical_clinic.DTO.PatientDto;
+import com.example.medical_clinic.DTO.PatientUpdateRequest;
 import com.example.medical_clinic.exception.PatientAlreadyExistsException;
 import com.example.medical_clinic.exception.PatientNotFoundException;
+import com.example.medical_clinic.mapper.PatientMapper;
 import com.example.medical_clinic.model.Patient;
+import com.example.medical_clinic.DTO.PatientCreateRequest;
 import com.example.medical_clinic.repository.PatientRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class PatientService {
     private final PatientRepository patientRepository;
+    private final PatientMapper patientMapper;
 
-    public PatientService(PatientRepository patientRepository) {
-        this.patientRepository = patientRepository;
-    }
-
-    public List<Patient> getAll() {
-        return patientRepository.getAll();
+    public List<PatientDto> getAll() {
+        return patientRepository.findAll().stream()
+                .map(patientMapper::patientToDto)
+                .toList();
     }
 
     public Patient getByEmail(String email) {
@@ -26,35 +31,43 @@ public class PatientService {
                 .orElseThrow(() -> new PatientNotFoundException("Pacjent o mailu " + email + " nie istnieje"));
     }
 
-    public Patient add(Patient patient) {
-        if (userExists(patient.getEmail())) {
+    public Patient add(PatientCreateRequest request) {
+
+        if (patientRepository.existsByEmail(request.email())) {
             throw new PatientAlreadyExistsException("Pacjent juz istnieje!");
         }
 
-        patientRepository.add(patient);
+        Patient patient = Patient.builder()
+                .email(request.email())
+                .password(request.password())
+                .idCardNo(request.idCardNo())
+                .firstName(request.firstName())
+                .lastName(request.lastName())
+                .phoneNumber(request.phoneNumber())
+                .birthday(request.birthday())
+                .build();
+
+        patientRepository.save(patient);
         return patient;
     }
 
+    @Transactional
     public void removeByEmail(String email) {
-        if (!patientRepository.deleteByEmail(email)) {
+        if (!patientRepository.existsByEmail(email)) {
             throw new PatientNotFoundException("nie znaleziono pacjenta o mailu: " + email);
         }
+        patientRepository.deleteByEmail(email);
     }
 
-    public Patient updateByEmail(String email, Patient updated) {
-        Patient source = getByEmail(email);
-
-        source.setPassword(updated.getPassword());
-        source.setIdCardNo(updated.getIdCardNo());
-        source.setFirstName(updated.getFirstName());
-        source.setLastName(updated.getLastName());
-        source.setPhoneNumber(updated.getPhoneNumber());
-        source.setBirthday(updated.getBirthday());
-
-        return source;
+    @Transactional
+    public Patient updateByEmail(String email, PatientUpdateRequest request) {
+        Patient patient = getByEmail(email);
+        return patient.update(request);
     }
 
-    private boolean userExists(String email) {
-        return patientRepository.getByEmail(email).isPresent();
+    public void updatePassword(String email, String password) {
+        Patient patient = getByEmail(email);
+        patient.setPassword(password);
+        patientRepository.save(patient);
     }
 }

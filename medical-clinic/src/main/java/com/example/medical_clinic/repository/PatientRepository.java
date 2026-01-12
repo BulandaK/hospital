@@ -1,38 +1,29 @@
 package com.example.medical_clinic.repository;
 
 import com.example.medical_clinic.model.Patient;
+import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class PatientRepository {
-    private final List<Patient> patients;
+public interface PatientRepository extends JpaRepository<Patient, Long> {
 
-    public PatientRepository(List<Patient> patients) {
-        this.patients = patients;
-        patients.add(new Patient("jan@test.pl", "haslo123", "123", "Jan", "Kowalski", "555", LocalDate.now()));
-    }
+    Optional<Patient> getByEmail(String email);
 
-    public List<Patient> getAll() {
-        return new ArrayList<>(patients);
-    }
+    boolean existsByEmail(String email);
 
-    public Optional<Patient> getByEmail(String email) {
-        return patients.stream()
-                .filter(patient -> patient.getEmail().equals(email))
-                .findFirst();
-    }
+    @Transactional
+    void deleteByEmail(String email);
 
-    public void add(Patient patient) {
-        patients.add(patient);
-    }
-
-    public boolean deleteByEmail(String email) {
-        return patients.removeIf(patient -> patient.getEmail().equals(email));
-    }
+//    @Modifying
+//    @Transactional
+//    @Query("UPDATE Patient p SET p.password = :password WHERE p.email = :email")
+//    void updatePassword(String email, String password);
 
 }
