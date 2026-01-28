@@ -31,6 +31,20 @@ public class Clinic {
     @EqualsAndHashCode.Exclude
     private Set<Doctor> doctors;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Clinic)) return false;
+        Clinic clinic = (Clinic) o;
+        return id != null &&
+                id.equals(clinic.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
     public Clinic update(ClinicRequest updated) {
         this.setName(updated.name());
         this.setCity(updated.city());

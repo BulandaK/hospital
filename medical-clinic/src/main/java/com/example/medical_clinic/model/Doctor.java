@@ -33,6 +33,20 @@ public class Doctor {
     @EqualsAndHashCode.Exclude
     private Set<Clinic> clinics;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Doctor)) return false;
+        Doctor doctor = (Doctor) o;
+        return id != null &&
+                id.equals(doctor.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
     public Doctor update(DoctorUpdateRequest updated) {
         this.setSpecialization(updated.specialization());
         this.setEmail(updated.email());
