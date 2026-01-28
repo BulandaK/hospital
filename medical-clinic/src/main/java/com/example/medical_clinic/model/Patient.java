@@ -1,20 +1,18 @@
 package com.example.medical_clinic.model;
 
-import com.example.medical_clinic.DTO.PatientUpdateRequest;
+import com.example.medical_clinic.DTO.patient.PatientUpdateRequest;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
-@Data
+@Setter
+@Getter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "patients")
 @Entity
-@Builder
 public class Patient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,16 +20,38 @@ public class Patient {
     private String email;
     private String password;
     private String idCardNo;
-    private String firstName;
-    private String lastName;
     private String phoneNumber;
     private LocalDate birthday;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "USER_ID", referencedColumnName = "id")
+    @ToString.Exclude
+    private User user;
+    @ManyToOne
+    @JoinColumn(name = "doctor_id", referencedColumnName = "id")
+    @ToString.Exclude
+    Doctor doctor;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Patient)) return false;
+        Patient patient = (Patient) o;
+        return id != null &&
+                id.equals(patient.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 
     public Patient update(PatientUpdateRequest updated) {
-        this.setFirstName(updated.firstName());
-        this.setLastName(updated.lastName());
         this.setPhoneNumber(updated.phoneNumber());
         this.setBirthday(updated.birthday());
+        if (this.user != null) {
+            this.user.setFirstName(updated.firstName());
+            this.user.setLastName(updated.lastName());
+        }
         return this;
     }
 }

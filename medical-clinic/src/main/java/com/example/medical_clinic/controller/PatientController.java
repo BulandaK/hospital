@@ -1,13 +1,14 @@
 package com.example.medical_clinic.controller;
 
 import com.example.medical_clinic.DTO.ChangePasswordCommand;
-import com.example.medical_clinic.DTO.PatientDto;
-import com.example.medical_clinic.DTO.PatientUpdateRequest;
+import com.example.medical_clinic.DTO.patient.PatientDto;
+import com.example.medical_clinic.DTO.patient.PatientUpdateRequest;
 import com.example.medical_clinic.mapper.PatientMapper;
 import com.example.medical_clinic.model.Patient;
-import com.example.medical_clinic.DTO.PatientCreateRequest;
+import com.example.medical_clinic.DTO.patient.PatientCreateRequest;
 import com.example.medical_clinic.services.PatientService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,13 +22,11 @@ public class PatientController {
     private final PatientMapper patientMapper;
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<PatientDto> getAll() {
-        return patientService.getAll();
+    public List<PatientDto> getAll(Pageable pageable) {
+        return patientService.getAll(pageable);
     }
 
     @GetMapping("/{email}")
-    @ResponseStatus(HttpStatus.OK)
     public PatientDto getByEmail(@PathVariable String email) {
         Patient patient = patientService.getByEmail(email);
         return patientMapper.patientToDto(patient);
@@ -47,14 +46,12 @@ public class PatientController {
     }
 
     @PutMapping("/{email}")
-    @ResponseStatus(HttpStatus.OK)
     public PatientDto update(@PathVariable String email, @RequestBody PatientUpdateRequest request) {
         Patient patient = patientService.updateByEmail(email, request);
         return patientMapper.patientToDto(patient);
     }
 
     @PatchMapping("/{email}")
-    @ResponseStatus(HttpStatus.OK)
     public void updatePassword(@PathVariable String email, @RequestBody ChangePasswordCommand password) {
         patientService.updatePassword(email, password.password());
     }

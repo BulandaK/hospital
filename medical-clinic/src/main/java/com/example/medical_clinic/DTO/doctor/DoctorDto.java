@@ -1,0 +1,8 @@
+package com.example.medical_clinic.DTO.doctor;
+
+public record DoctorDto(String specialization,
+                        String email,
+                        String firstName,
+                        String lastName
+) {
+}
