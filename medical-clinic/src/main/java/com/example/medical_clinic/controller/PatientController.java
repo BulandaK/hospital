@@ -32,7 +32,7 @@ public class PatientController {
         return patientMapper.patientToDto(patient);
     }
 
-    @PostMapping("/")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public PatientDto create(@RequestBody PatientCreateRequest request) {
         Patient patient = patientService.add(request);

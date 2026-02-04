@@ -2,8 +2,8 @@ package com.example.medical_clinic.services;
 
 import com.example.medical_clinic.DTO.patient.PatientDto;
 import com.example.medical_clinic.DTO.patient.PatientUpdateRequest;
-import com.example.medical_clinic.exception.PatientAlreadyExistsException;
-import com.example.medical_clinic.exception.PatientNotFoundException;
+import com.example.medical_clinic.exception.patient.PatientAlreadyExistsException;
+import com.example.medical_clinic.exception.patient.PatientNotFoundException;
 import com.example.medical_clinic.mapper.PatientMapper;
 import com.example.medical_clinic.model.Patient;
 import com.example.medical_clinic.DTO.patient.PatientCreateRequest;
@@ -38,15 +38,11 @@ public class PatientService {
 
     @Transactional
     public Patient add(PatientCreateRequest request) {
-
         if (patientRepository.existsByEmail(request.email())) {
             throw new PatientAlreadyExistsException("patient already exists!");
         }
-        User user = new User();
-        user.setFirstName(request.firstName());
-        user.setLastName(request.lastName());
-
-        Patient patient = new Patient(null, request.email(), request.password(), request.idCardNo(), request.phoneNumber(), request.birthday(), user, null);
+        User user = new User(null,request.firstName(),request.lastName(),null,null);
+        Patient patient = new Patient(null, request.email(), request.password(), request.idCardNo(), request.phoneNumber(), request.birthday(), user, null,null);
         patientRepository.save(patient);
         return patient;
     }
@@ -65,6 +61,7 @@ public class PatientService {
         return patient.update(request);
     }
 
+    @Transactional
     public void updatePassword(String email, String password) {
         Patient patient = getByEmail(email);
         patient.setPassword(password);

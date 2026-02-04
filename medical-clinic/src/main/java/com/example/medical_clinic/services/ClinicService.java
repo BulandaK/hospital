@@ -3,8 +3,8 @@ package com.example.medical_clinic.services;
 import com.example.medical_clinic.DTO.PageResponse;
 import com.example.medical_clinic.DTO.clinic.ClinicDto;
 import com.example.medical_clinic.DTO.clinic.ClinicRequest;
-import com.example.medical_clinic.exception.ClinicNotFoundException;
-import com.example.medical_clinic.exception.DoctorNotFoundException;
+import com.example.medical_clinic.exception.clinic.ClinicNotFoundException;
+import com.example.medical_clinic.exception.doctor.DoctorNotFoundException;
 import com.example.medical_clinic.mapper.ClinicMapper;
 import com.example.medical_clinic.model.Clinic;
 import com.example.medical_clinic.model.Doctor;
@@ -39,7 +39,6 @@ public class ClinicService {
                 clinicPage.getTotalPages()
         );
     }
-
     public Clinic getById(Long id) {
         return clinicRepository.findById(id)
                 .orElseThrow(() -> new ClinicNotFoundException("Clinic not found with id: " + id));
@@ -47,12 +46,8 @@ public class ClinicService {
 
     @Transactional
     public Clinic add(ClinicRequest request) {
-        Clinic clinic = new Clinic();
-        clinic.setName(request.name());
-        clinic.setCity(request.city());
-        clinic.setPostalCode(request.postalCode());
-        clinic.setStreet(request.street());
-        clinic.setBuildingNumber(request.buildingNumber());
+
+        Clinic clinic = new Clinic(null,request.name(),request.city(), request.postalCode(), request.street(), request.buildingNumber(),null);
         return clinicRepository.save(clinic);
     }
 
@@ -76,9 +71,7 @@ public class ClinicService {
         Clinic clinic = getById(clinicId);
         Doctor doctor = doctorRepository.findById(doctorId)
                 .orElseThrow(() -> new DoctorNotFoundException("Doctor not found with id: " + doctorId));
-
         clinic.getDoctors().add(doctor);
-
         return clinic;
     }
 }

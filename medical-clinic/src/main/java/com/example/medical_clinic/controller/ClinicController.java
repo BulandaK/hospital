@@ -31,7 +31,7 @@ public class ClinicController {
         return clinicMapper.toDto(clinic);
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public ClinicDto create(@RequestBody ClinicRequest request) {
         Clinic clinic = clinicService.add(request);
@@ -50,7 +50,7 @@ public class ClinicController {
         return clinicMapper.toDto(clinic);
     }
 
-    @PatchMapping("/{id}/assign-doctor/{doctorId}")
+    @PatchMapping("/{id}/doctor/{doctorId}")
     public ClinicDto assignDoctor(@PathVariable Long id, @PathVariable Long doctorId) {
         Clinic clinic = clinicService.assignDoctor(id, doctorId);
         return clinicMapper.toDto(clinic);

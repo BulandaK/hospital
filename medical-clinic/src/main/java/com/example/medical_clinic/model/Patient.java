@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -30,6 +31,10 @@ public class Patient {
     @JoinColumn(name = "doctor_id", referencedColumnName = "id")
     @ToString.Exclude
     Doctor doctor;
+    @OneToMany(mappedBy = "patient")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<Visit> visits;
 
     @Override
     public boolean equals(Object o) {

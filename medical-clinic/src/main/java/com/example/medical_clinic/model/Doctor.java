@@ -32,6 +32,10 @@ public class Doctor {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Clinic> clinics;
+    @OneToMany(mappedBy = "doctor")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<Visit> visits;
 
     @Override
     public boolean equals(Object o) {
