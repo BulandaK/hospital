@@ -43,7 +43,6 @@ public class VisitService {
         return visitRepository.findAllByPatientId(patientId).stream()
                 .map(visitMapper::toDto)
                 .toList();
-
     }
 
     @Transactional
