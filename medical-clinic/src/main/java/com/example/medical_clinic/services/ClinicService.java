@@ -39,6 +39,7 @@ public class ClinicService {
                 clinicPage.getTotalPages()
         );
     }
+
     public Clinic getById(Long id) {
         return clinicRepository.findById(id)
                 .orElseThrow(() -> new ClinicNotFoundException("Clinic not found with id: " + id));
@@ -46,7 +47,6 @@ public class ClinicService {
 
     @Transactional
     public Clinic add(ClinicRequest request) {
-
         Clinic clinic = new Clinic(null,request.name(),request.city(), request.postalCode(), request.street(), request.buildingNumber(),null);
         return clinicRepository.save(clinic);
     }
