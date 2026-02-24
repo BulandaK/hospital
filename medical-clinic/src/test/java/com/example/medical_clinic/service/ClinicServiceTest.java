@@ -3,6 +3,7 @@ package com.example.medical_clinic.service;
 import com.example.medical_clinic.DTO.PageResponse;
 import com.example.medical_clinic.DTO.clinic.ClinicDto;
 import com.example.medical_clinic.DTO.clinic.ClinicRequest;
+import com.example.medical_clinic.DTO.clinic.ClinicUpdateRequest;
 import com.example.medical_clinic.mapper.ClinicMapper;
 import com.example.medical_clinic.model.Clinic;
 import com.example.medical_clinic.model.Doctor;
@@ -18,9 +19,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -99,7 +101,7 @@ public class ClinicServiceTest {
     @Test
     void updateById_WhenDataCorrect_ThenReturnClinicEntity() {
         Long clinicId = 1L;
-        ClinicRequest request = new ClinicRequest("clinic one","cracow","32-211","długa","19");
+        ClinicUpdateRequest request = new ClinicUpdateRequest("clinic one","cracow","32-211","długa","19");
         Clinic existingClinic = new Clinic();
         existingClinic.setId(clinicId);
         when(clinicRepository.findById(clinicId)).thenReturn(Optional.of(existingClinic));
@@ -120,7 +122,8 @@ public class ClinicServiceTest {
         //given
         Long clinicId = 1L;
         Long doctorId = 1L;
-        Clinic clinic = new Clinic(1L, "clinic one", "cracow", "32-125", "Długa", "19/4", Collections.emptySet());
+        Set<Doctor> doctorSet = new HashSet<>();
+        Clinic clinic = new Clinic(1L, "clinic one", "cracow", "32-125", "Długa", "19/4", doctorSet);
         Doctor doctor = new Doctor(1L, "cardiology", "jan@gmail.com", "password", null, null, null, null);
         when(clinicRepository.findById(clinicId)).thenReturn(Optional.of(clinic));
         when(doctorRepository.findById(doctorId)).thenReturn(Optional.of(doctor));

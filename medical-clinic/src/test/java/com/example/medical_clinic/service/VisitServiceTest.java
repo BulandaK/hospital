@@ -89,7 +89,7 @@ public class VisitServiceTest {
         //given
         Doctor doctor = new Doctor();
         doctor.setId(1L);
-        VisitRequest request = new VisitRequest(LocalDateTime.of(2026, 2, 20, 10, 0), LocalDateTime.of(2026, 2, 20, 11, 0), doctor.getId());
+        VisitRequest request = new VisitRequest(LocalDateTime.of(2055, 2, 20, 10, 0), LocalDateTime.of(2055, 2, 20, 11, 0), doctor.getId());
         Visit visit = new Visit(1L, request.startTime(), request.endTime(), doctor, null);
         when(doctorRepository.findById(request.doctorId())).thenReturn(Optional.of(doctor));
         when(visitRepository.save(any(Visit.class))).thenReturn(visit);

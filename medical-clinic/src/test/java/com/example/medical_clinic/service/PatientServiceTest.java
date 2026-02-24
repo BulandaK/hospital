@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -146,7 +147,7 @@ public class PatientServiceTest {
     }
 
     @Test
-    void removeByEmail_whenRemove_thenPatientIsDeleted() {
+    void removeByEmail_WhenDataCorrect_thenPatientIsDeleted() {
         //given
         String email = "jan@email.com";
         when(patientRepository.existsByEmail(email)).thenReturn(true);
@@ -162,11 +163,13 @@ public class PatientServiceTest {
         String email = "notexisting@email.com";
         when(patientRepository.existsByEmail(email)).thenReturn(false);
         //when then
-        Assertions.assertThrows(PatientNotFoundException.class, () -> {
+        PatientNotFoundException patientNotFoundException = Assertions.assertThrows(PatientNotFoundException.class, () -> {
             patientService.removeByEmail(email);
         });
 
         verify(patientRepository, never()).deleteByEmail(anyString());
+        Assertions.assertEquals("not found patient with: "+email,patientNotFoundException.getMessage());
+//        verifyNoMoreInteractions(patientRepository);
     }
 
     @Test
@@ -215,11 +218,24 @@ public class PatientServiceTest {
 
         // when
         patientService.updatePassword(email, newPassword);
-
         // then
-        Assertions.assertAll(
-                () -> Assertions.assertEquals(newPassword, existingPatient.getPassword(), "password in object should change"),
-                () -> verify(patientRepository, times(1)).save(existingPatient)
-        );
+        verify(patientRepository).save(argThat(new PatientPasswordMatcher(email, newPassword)));
+    }
+    public static class PatientPasswordMatcher implements ArgumentMatcher<Patient> {
+        private final String expectedEmail;
+        private final String expectedPassword;
+
+        public PatientPasswordMatcher(String expectedEmail, String expectedPassword) {
+            this.expectedEmail = expectedEmail;
+            this.expectedPassword = expectedPassword;
+        }
+
+        @Override
+        public boolean matches(Patient patient) {
+            if (patient == null) return false;
+
+            return expectedEmail.equals(patient.getEmail()) &&
+                    expectedPassword.equals(patient.getPassword());
+        }
     }
 }

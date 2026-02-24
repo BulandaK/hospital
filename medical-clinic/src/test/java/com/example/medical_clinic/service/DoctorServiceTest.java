@@ -4,6 +4,7 @@ import com.example.medical_clinic.DTO.PageResponse;
 import com.example.medical_clinic.DTO.doctor.DoctorCreateRequest;
 import com.example.medical_clinic.DTO.doctor.DoctorDto;
 import com.example.medical_clinic.DTO.doctor.DoctorUpdateRequest;
+import com.example.medical_clinic.exception.doctor.DoctorNotFoundException;
 import com.example.medical_clinic.mapper.DoctorMapper;
 import com.example.medical_clinic.model.Doctor;
 import com.example.medical_clinic.model.User;
@@ -24,7 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class DoctorServiceTest {
     DoctorRepository doctorRepository;
@@ -79,6 +80,17 @@ public class DoctorServiceTest {
     }
 
     @Test
+    void getByEmail_WhenDataIncorrect_ThenThrowException() {
+        //given
+        String email = "nonexisting@gmail.com";
+        when(doctorRepository.existsByEmail(email)).thenReturn(false);
+
+        DoctorNotFoundException exception = Assertions.assertThrows(DoctorNotFoundException.class, () -> {
+           doctorService.getByEmail(email);
+        });
+        verify(doctorRepository,times(1)).getByEmail(email);
+    }
+    @Test
     void getById_DataCorrect_ReturnDoctorEntity() {
         //given
         Long id = 1L;
@@ -113,6 +125,18 @@ public class DoctorServiceTest {
                 () -> Assertions.assertEquals("Kowalczyk", result.getUser().getLastName())
 
         );
+    }
+
+    @Test
+    void removeByEmail_DataCorrect_ThenDoctorIsDeleted() {
+        //given
+        String email = "mail";
+        Doctor doctor = new Doctor();
+        when(doctorRepository.existsByEmail(email)).thenReturn(true);
+        //when
+        doctorService.removeByEmail(email);
+        //then
+        verify(doctorRepository,times(1)).deleteByEmail(email);
     }
 
     @Test
