@@ -1,6 +1,6 @@
 package com.example.medical_clinic.model;
 
-import com.example.medical_clinic.DTO.clinic.ClinicRequest;
+import com.example.medical_clinic.DTO.clinic.ClinicUpdateRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -45,7 +45,7 @@ public class Clinic {
         return getClass().hashCode();
     }
 
-    public Clinic update(ClinicRequest updated) {
+    public Clinic update(ClinicUpdateRequest updated) {
         this.setName(updated.name());
         this.setCity(updated.city());
         this.setPostalCode(updated.postalCode());

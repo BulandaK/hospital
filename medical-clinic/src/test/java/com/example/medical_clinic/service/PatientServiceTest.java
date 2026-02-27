@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -42,28 +43,10 @@ public class PatientServiceTest {
     @Test
     void getAll_dataCorrect_ReturnListOfPatientDto() {
         //given
-        Patient patient1 = new Patient(
-                1L,
-                "email@com",
-                "strongPassword",
-                "123qwer",
-                "999",
-                LocalDate.of(2002, 11, 23),
-                null,
-                null,
-                Collections.emptySet()
-        );
-        Patient patient2 = new Patient(
-                2L,
-                "gmail@com",
-                "strongPassword",
-                "456zaq",
-                "666555444",
-                LocalDate.of(2001, 8, 21),
-                null,
-                null,
-                Collections.emptySet()
-        );
+        Patient patient1 = new Patient(1L, "email@com", "strongPassword", "123qwer", "999", LocalDate.of(2002, 11, 23),
+                null, null, Collections.emptySet());
+        Patient patient2 = new Patient(2L, "gmail@com", "strongPassword", "456zaq", "666555444", LocalDate.of(2001, 8, 21),
+                null, null, Collections.emptySet());
 
         PageRequest pageRequest = PageRequest.of(0, 10);
         List<Patient> patients = List.of(patient1, patient2);
@@ -72,7 +55,6 @@ public class PatientServiceTest {
 
         //when
         List<PatientDto> result = patientService.getAll(pageRequest);
-
 
         //then
         Assertions.assertAll(
@@ -91,10 +73,8 @@ public class PatientServiceTest {
         //given
         PageRequest pageable = PageRequest.of(0, 10);
         when(patientRepository.findAll(pageable)).thenReturn(Page.empty());
-
         //when
         List<PatientDto> result = patientService.getAll(pageable);
-
         //then
         Assertions.assertAll(
                 () -> Assertions.assertNotNull(result, "list should not be null"),
@@ -108,22 +88,11 @@ public class PatientServiceTest {
     void getByEmail_DataCorrect_ReturnPatient() {
         //given
         String email = "jan@gmail.com";
-        Patient patient1 = new Patient(
-                1L,
-                email,
-                "strongPassword",
-                "123qwer",
-                "999",
-                LocalDate.of(2002, 11, 23),
-                null,
-                null,
-                Collections.emptySet()
-        );
+        Patient patient1 = new Patient(1L, email, "strongPassword", "123qwer", "999", LocalDate.of(2002, 11, 23),
+                null, null, Collections.emptySet());
         when(patientRepository.getByEmail(email)).thenReturn(Optional.of(patient1));
-
         //when
         Patient result = patientService.getByEmail(email);
-
         //then
         Assertions.assertAll(
                 () -> Assertions.assertNotNull(result, "should return one patient"),
@@ -146,25 +115,16 @@ public class PatientServiceTest {
     @Test
     void add_DataCorrect_ReturnPatient() {
         //given
-        PatientCreateRequest request = new PatientCreateRequest(
-                "jan@email.com",
-                "password",
-                "zaq1",
-                "Jan",
-                "Kowalski",
-                "123456789",
-                LocalDate.of(2003, 2, 22)
-        );
+        PatientCreateRequest request = new PatientCreateRequest("jan@email.com", "password", "zaq1", "Jan", "Kowalski", "123456789",
+                LocalDate.of(2003, 2, 22));
         when(patientRepository.existsByEmail(request.email())).thenReturn(false);
         when(patientRepository.save(any(Patient.class))).thenAnswer(invocation -> {
             Patient p = invocation.getArgument(0);
             p.setId(1L);
             return p;
         });
-
         //when
         Patient result = patientService.add(request);
-
         //then
         Assertions.assertAll(
                 () -> Assertions.assertNotNull(result),
@@ -177,24 +137,17 @@ public class PatientServiceTest {
     @Test
     void add_AlreadyExists_ThrowError() {
         //given
-        PatientCreateRequest request = new PatientCreateRequest(
-                "jan@email.com",
-                "password",
-                "zaq1",
-                "Jan",
-                "Kowalski",
-                "123456789",
+        PatientCreateRequest request = new PatientCreateRequest("jan@email.com", "password", "zaq1", "Jan", "Kowalski", "123456789",
                 LocalDate.of(2003, 2, 22)
         );
         when(patientRepository.existsByEmail(request.email())).thenReturn(true);
-
         Assertions.assertThrows(PatientAlreadyExistsException.class, () -> {
             patientService.add(request);
         });
     }
 
     @Test
-    void removeByEmail_whenRemove_thenPatientIsDeleted() {
+    void removeByEmail_WhenDataCorrect_thenPatientIsDeleted() {
         //given
         String email = "jan@email.com";
         when(patientRepository.existsByEmail(email)).thenReturn(true);
@@ -210,11 +163,13 @@ public class PatientServiceTest {
         String email = "notexisting@email.com";
         when(patientRepository.existsByEmail(email)).thenReturn(false);
         //when then
-        Assertions.assertThrows(PatientNotFoundException.class, () -> {
+        PatientNotFoundException patientNotFoundException = Assertions.assertThrows(PatientNotFoundException.class, () -> {
             patientService.removeByEmail(email);
         });
 
         verify(patientRepository, never()).deleteByEmail(anyString());
+        Assertions.assertEquals("not found patient with: " + email, patientNotFoundException.getMessage());
+//        verifyNoMoreInteractions(patientRepository);
     }
 
     @Test
@@ -235,10 +190,8 @@ public class PatientServiceTest {
         existingPatient.setPhoneNumber("111222333");
 
         when(patientRepository.getByEmail(email)).thenReturn(Optional.of(existingPatient));
-
         // when
         Patient result = patientService.updateByEmail(email, request);
-
         // then
         Assertions.assertAll(
                 () -> Assertions.assertNotNull(result),
@@ -265,11 +218,25 @@ public class PatientServiceTest {
 
         // when
         patientService.updatePassword(email, newPassword);
-
         // then
-        Assertions.assertAll(
-                () -> Assertions.assertEquals(newPassword, existingPatient.getPassword(), "password in object should change"),
-                () -> verify(patientRepository, times(1)).save(existingPatient)
-        );
+        verify(patientRepository).save(argThat(new PatientPasswordMatcher(email, newPassword)));
+    }
+
+    public static class PatientPasswordMatcher implements ArgumentMatcher<Patient> {
+        private final String expectedEmail;
+        private final String expectedPassword;
+
+        public PatientPasswordMatcher(String expectedEmail, String expectedPassword) {
+            this.expectedEmail = expectedEmail;
+            this.expectedPassword = expectedPassword;
+        }
+
+        @Override
+        public boolean matches(Patient patient) {
+            if (patient == null) return false;
+
+            return expectedEmail.equals(patient.getEmail()) &&
+                    expectedPassword.equals(patient.getPassword());
+        }
     }
 }
