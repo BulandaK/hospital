@@ -56,7 +56,7 @@ public class VisitService {
 
         Doctor doctor = doctorRepository.findById(request.doctorId())
                 .orElseThrow(() -> {
-                    log.warn("Doctor assignment failed: doctor with id: {} not found",request.doctorId());
+                    log.warn("Doctor assignment failed: doctor with id: {} not found", request.doctorId());
                     return new DoctorNotFoundException("Doctor not found");
                 });
 

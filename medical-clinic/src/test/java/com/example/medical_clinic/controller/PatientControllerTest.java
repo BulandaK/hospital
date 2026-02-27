@@ -91,10 +91,11 @@ public class PatientControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.email").value(email))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value("Kamil"));
     }
+
     @Test
     void getByEmail_PatientNotExists_ReturnExceptionAndStatus404() throws Exception {
         String email = "nonexisting@mail.com";
-        when(patientService.getByEmail(email)).thenThrow(new PatientNotFoundException("Patient with email: "+email + "not found"));
+        when(patientService.getByEmail(email)).thenThrow(new PatientNotFoundException("Patient with email: " + email + "not found"));
         mockMvc.perform(MockMvcRequestBuilders.get("/patients/" + email))
                 .andExpect(status().isNotFound());
     }

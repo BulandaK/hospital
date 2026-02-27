@@ -53,7 +53,7 @@ public class VisitController {
     public List<VisitDto> getAllVisitsByPatientId(
             @Parameter(description = "ID of the patient", example = "1")
             @PathVariable @NotBlank Long patientId) {
-        log.info("Getting visit by patient with ID: {}",patientId);
+        log.info("Getting visit by patient with ID: {}", patientId);
         return visitService.getPatientVisits(patientId);
     }
 
@@ -65,13 +65,13 @@ public class VisitController {
             responses = {
                     @ApiResponse(responseCode = "201", description = "Visit slot created successfully"),
                     @ApiResponse(responseCode = "400", description = "Invalid time format or overlapping visit", content = @Content),
-                    @ApiResponse(responseCode = "404", description = "Doctor not found",content = @Content)
+                    @ApiResponse(responseCode = "404", description = "Doctor not found", content = @Content)
             }
     )
     public VisitDto create(@RequestBody @Valid VisitRequest request) {
-        log.info("Creating visit, doctor ID: {}",request.doctorId());
+        log.info("Creating visit, doctor ID: {}", request.doctorId());
         Visit visit = visitService.create(request);
-        log.info("Visit created successfully, doctor ID: {}",request.doctorId());
+        log.info("Visit created successfully, doctor ID: {}", request.doctorId());
         return visitMapper.toDto(visit);
     }
 
@@ -88,9 +88,9 @@ public class VisitController {
     public VisitDto addPatient(
             @Parameter(description = "ID of the visit slot", example = "10") @PathVariable @NotBlank Long id,
             @Parameter(description = "ID of the patient booking the visit", example = "1") @PathVariable @NotBlank Long patientId) {
-        log.info("Adding patient with ID: {}, to visit with id: {}",patientId,id);
+        log.info("Adding patient with ID: {}, to visit with id: {}", patientId, id);
         Visit visit = visitService.addPatient(id, patientId);
-        log.info("Completed successfully: Adding patient with ID: {}, to visit with id: {}",patientId,id);
+        log.info("Completed successfully: Adding patient with ID: {}, to visit with id: {}", patientId, id);
         return visitMapper.toDto(visit);
     }
 }

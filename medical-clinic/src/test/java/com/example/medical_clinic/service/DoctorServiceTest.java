@@ -86,10 +86,11 @@ public class DoctorServiceTest {
         when(doctorRepository.existsByEmail(email)).thenReturn(false);
 
         DoctorNotFoundException exception = Assertions.assertThrows(DoctorNotFoundException.class, () -> {
-           doctorService.getByEmail(email);
+            doctorService.getByEmail(email);
         });
-        verify(doctorRepository,times(1)).getByEmail(email);
+        verify(doctorRepository, times(1)).getByEmail(email);
     }
+
     @Test
     void getById_DataCorrect_ReturnDoctorEntity() {
         //given
@@ -136,24 +137,24 @@ public class DoctorServiceTest {
         //when
         doctorService.removeByEmail(email);
         //then
-        verify(doctorRepository,times(1)).deleteByEmail(email);
+        verify(doctorRepository, times(1)).deleteByEmail(email);
     }
 
     @Test
     void updateEmail_DataCorrect_ReturnDoctorEntity() {
         //given
         String email = "jankowalczyk@gmail.com";
-        DoctorUpdateRequest updateRequest = new DoctorUpdateRequest("cardiology",email,"Jan","Kowalczyk");
-        User user = new User(1L,"Kamil","Bulanda",null,null);
-        Doctor doctor = new Doctor(1L,"proctology",email,"password",user,null,null,null);
+        DoctorUpdateRequest updateRequest = new DoctorUpdateRequest("cardiology", email, "Jan", "Kowalczyk");
+        User user = new User(1L, "Kamil", "Bulanda", null, null);
+        Doctor doctor = new Doctor(1L, "proctology", email, "password", user, null, null, null);
         when(doctorRepository.getByEmail(email)).thenReturn(Optional.of(doctor));
         //when
-        Doctor result = doctorService.updateByEmail(email,updateRequest);
+        Doctor result = doctorService.updateByEmail(email, updateRequest);
         //then
         Assertions.assertAll(
-                () -> Assertions.assertEquals(updateRequest.specialization(),result.getSpecialization()),
-                () -> Assertions.assertEquals(updateRequest.firstName(),result.getUser().getFirstName()),
-                () -> Assertions.assertEquals(updateRequest.lastName(),result.getUser().getLastName())
+                () -> Assertions.assertEquals(updateRequest.specialization(), result.getSpecialization()),
+                () -> Assertions.assertEquals(updateRequest.firstName(), result.getUser().getFirstName()),
+                () -> Assertions.assertEquals(updateRequest.lastName(), result.getUser().getLastName())
         );
     }
 }

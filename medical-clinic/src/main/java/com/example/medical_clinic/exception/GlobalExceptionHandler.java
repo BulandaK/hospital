@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
         String errorMessage = ex.getAllErrors().stream()
                 .map(MessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining(", "));
-        return createResponse(new Exception(errorMessage),request,HttpStatus.BAD_REQUEST);
+        return createResponse(new Exception(errorMessage), request, HttpStatus.BAD_REQUEST);
     }
 
     private ResponseEntity<ErrorResponse> createResponse(Exception ex, HttpServletRequest request, HttpStatus status) {

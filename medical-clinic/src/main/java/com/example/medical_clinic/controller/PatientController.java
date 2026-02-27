@@ -57,7 +57,7 @@ public class PatientController {
             @Parameter(description = "The unique email address of the patient", example = "kami@gmail.com")
             @PathVariable @NotBlank(message = "email can't be null") @Email String email) {
         Patient patient = patientService.getByEmail(email);
-        log.info("Patient found with email {} {}",email,patient);
+        log.info("Patient found with email {} {}", email, patient);
         return patientMapper.patientToDto(patient);
     }
 
@@ -72,9 +72,9 @@ public class PatientController {
             }
     )
     public PatientDto create(@RequestBody @Valid PatientCreateRequest request) {
-        log.info("Creating new patient with email: {}",request.email());
+        log.info("Creating new patient with email: {}", request.email());
         Patient patient = patientService.add(request);
-        log.info("Patient with email: {} has been created",patient.getEmail());
+        log.info("Patient with email: {} has been created", patient.getEmail());
         return patientMapper.patientToDto(patient);
     }
 
@@ -88,7 +88,7 @@ public class PatientController {
             }
     )
     public void delete(@PathVariable @NotBlank String email) {
-        log.info("Deleting patient with email: {}",email);
+        log.info("Deleting patient with email: {}", email);
         patientService.removeByEmail(email);
     }
 
@@ -103,9 +103,9 @@ public class PatientController {
     public PatientDto update(
             @PathVariable @NotBlank String email,
             @RequestBody @Valid PatientUpdateRequest request) {
-        log.info("Updating patient with email: {}",email);
+        log.info("Updating patient with email: {}", email);
         Patient patient = patientService.updateByEmail(email, request);
-        log.info("Patient with email: {}  updated successfully",email);
+        log.info("Patient with email: {}  updated successfully", email);
         return patientMapper.patientToDto(patient);
     }
 
@@ -121,6 +121,6 @@ public class PatientController {
             @PathVariable @NotBlank String email,
             @RequestBody @Valid @NotNull ChangePasswordCommand password) {
         patientService.updatePassword(email, password.password());
-        log.info("Patient with email: {}, changed password successfully",email);
+        log.info("Patient with email: {}, changed password successfully", email);
     }
 }

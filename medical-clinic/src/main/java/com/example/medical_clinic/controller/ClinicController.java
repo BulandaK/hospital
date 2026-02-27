@@ -52,7 +52,7 @@ public class ClinicController {
     public ClinicDto getById(
             @Parameter(description = "The unique ID of the clinic", example = "1")
             @PathVariable @NotBlank Long id) {
-        log.info("Getting clinic with id: {}",id);
+        log.info("Getting clinic with id: {}", id);
         Clinic clinic = clinicService.getById(id);
         return clinicMapper.toDto(clinic);
     }
@@ -68,9 +68,9 @@ public class ClinicController {
             }
     )
     public ClinicDto create(@RequestBody @Valid ClinicRequest request) {
-        log.info("Creating clinic: {}",request.name());
+        log.info("Creating clinic: {}", request.name());
         Clinic clinic = clinicService.add(request);
-        log.info("Clinic: {} created successfully",request.name());
+        log.info("Clinic: {} created successfully", request.name());
         return clinicMapper.toDto(clinic);
     }
 
@@ -85,9 +85,9 @@ public class ClinicController {
             }
     )
     public void delete(@PathVariable @NotBlank Long id) {
-        log.info("Deleting clinic with id: {}",id);
+        log.info("Deleting clinic with id: {}", id);
         clinicService.removeById(id);
-        log.info("Clinic with id: {}, deleted successfully",id);
+        log.info("Clinic with id: {}, deleted successfully", id);
     }
 
     @PutMapping("/{id}")
@@ -102,9 +102,9 @@ public class ClinicController {
     public ClinicDto update(
             @PathVariable @NotBlank Long id,
             @RequestBody @Valid ClinicUpdateRequest request) {
-        log.info("Updating clinic with id: {}",id);
+        log.info("Updating clinic with id: {}", id);
         Clinic clinic = clinicService.updateById(id, request);
-        log.info("Clinic with id: {}, updated successfully",id);
+        log.info("Clinic with id: {}, updated successfully", id);
         return clinicMapper.toDto(clinic);
     }
 
@@ -120,9 +120,9 @@ public class ClinicController {
     public ClinicDto assignDoctor(
             @Parameter(description = "ID of the clinic facility", example = "1") @PathVariable Long id,
             @Parameter(description = "ID of the doctor to be assigned", example = "5") @PathVariable Long doctorId) {
-        log.info("Assigning doctor with id: {} to clinic with id: {}",doctorId,id);
+        log.info("Assigning doctor with id: {} to clinic with id: {}", doctorId, id);
         Clinic clinic = clinicService.assignDoctor(id, doctorId);
-        log.info("Completed: assigning doctor with id: {} to clinic with id: {}",doctorId,id);
+        log.info("Completed: assigning doctor with id: {} to clinic with id: {}", doctorId, id);
         return clinicMapper.toDto(clinic);
     }
 }

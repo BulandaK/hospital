@@ -98,11 +98,11 @@ public class VisitServiceTest {
         //then
         Assertions.assertAll(
                 () -> Assertions.assertNotNull(result),
-                () -> Assertions.assertEquals(doctor,result.getDoctor()),
-                () -> Assertions.assertNull( result.getPatient()),
+                () -> Assertions.assertEquals(doctor, result.getDoctor()),
+                () -> Assertions.assertNull(result.getPatient()),
                 () -> Assertions.assertEquals(request.startTime(), result.getStartTime()),
                 () -> Assertions.assertEquals(request.endTime(), result.getEndTime())
-                );
+        );
     }
 
 }

@@ -43,7 +43,7 @@ public class DoctorControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    void testGetAll_ShouldReturnPageResponse() throws Exception {
+    void getAll_CorrectData_ReturnPageResponse() throws Exception {
         DoctorDto dto = new DoctorDto(1L, "Caridology", "abc@gmail.com", "Jan", "Kowalski");
         PageResponse<DoctorDto> pageResponse = new PageResponse<>(
                 List.of(dto), 0, 10, 1L, 1
@@ -60,11 +60,11 @@ public class DoctorControllerTest {
     }
 
     @Test
-    void testGetByEmail_ShouldReturnDoctor() throws Exception {
+    void getByEmail_DataCorrect_ReturnDoctorDto() throws Exception {
         String email = "doctor@med.com";
         Doctor doctor = new Doctor();
         doctor.setEmail(email);
-        DoctorDto dto = new DoctorDto(1L, "Neurology",email, "Adam", "Nowak");
+        DoctorDto dto = new DoctorDto(1L, "Neurology", email, "Adam", "Nowak");
 
         when(doctorService.getByEmail(email)).thenReturn(doctor);
         when(doctorMapper.toDto(doctor)).thenReturn(dto);
@@ -76,7 +76,7 @@ public class DoctorControllerTest {
     }
 
     @Test
-    void testPost_ShouldCreateDoctor() throws Exception {
+    void testPost_DataCorrect_ReturnDoctorDto() throws Exception {
         DoctorCreateRequest request = new DoctorCreateRequest(
                 "Kamil", "Bulanda", "abc@gmail.com", "passwd", "Neurology"
         );
@@ -95,7 +95,7 @@ public class DoctorControllerTest {
     }
 
     @Test
-    void testDelete_ShouldReturnNoContent() throws Exception {
+    void delete_DataCorrect_ReturnNoContent() throws Exception {
         String email = "delete@med.com";
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/doctors/" + email))
@@ -105,7 +105,7 @@ public class DoctorControllerTest {
     }
 
     @Test
-    void testUpdate_ShouldReturnUpdatedDoctor() throws Exception {
+    void update_DataCorrect_ReturnUpdatedDoctorDto() throws Exception {
         String email = "abc@gmail.com";
         DoctorUpdateRequest updateRequest = new DoctorUpdateRequest(
                 "Proctology", "abc@gmail.com", "Kamil", "Bulanda"

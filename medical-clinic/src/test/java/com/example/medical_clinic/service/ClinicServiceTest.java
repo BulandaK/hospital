@@ -101,7 +101,7 @@ public class ClinicServiceTest {
     @Test
     void updateById_WhenDataCorrect_ThenReturnClinicEntity() {
         Long clinicId = 1L;
-        ClinicUpdateRequest request = new ClinicUpdateRequest("clinic one","cracow","32-211","długa","19");
+        ClinicUpdateRequest request = new ClinicUpdateRequest("clinic one", "cracow", "32-211", "długa", "19");
         Clinic existingClinic = new Clinic();
         existingClinic.setId(clinicId);
         when(clinicRepository.findById(clinicId)).thenReturn(Optional.of(existingClinic));

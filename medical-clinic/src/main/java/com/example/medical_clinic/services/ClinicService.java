@@ -53,7 +53,7 @@ public class ClinicService {
 
     @Transactional
     public Clinic add(ClinicRequest request) {
-        Clinic clinic = new Clinic(null,request.name(),request.city(), request.postalCode(), request.street(), request.buildingNumber(),null);
+        Clinic clinic = new Clinic(null, request.name(), request.city(), request.postalCode(), request.street(), request.buildingNumber(), null);
         return clinicRepository.save(clinic);
     }
 

@@ -101,9 +101,9 @@ public class DoctorController {
     )
     public DoctorDto update(@PathVariable @NotBlank String email,
                             @RequestBody @Valid DoctorUpdateRequest request) {
-        log.info("Updating doctor with email: {}",email);
+        log.info("Updating doctor with email: {}", email);
         Doctor doctor = doctorService.updateByEmail(email, request);
-        log.info("Doctor with email: {}, successfully updated",email);
+        log.info("Doctor with email: {}, successfully updated", email);
         return doctorMapper.toDto(doctor);
     }
 }

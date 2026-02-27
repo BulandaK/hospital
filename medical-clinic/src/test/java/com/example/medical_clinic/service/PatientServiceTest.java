@@ -168,7 +168,7 @@ public class PatientServiceTest {
         });
 
         verify(patientRepository, never()).deleteByEmail(anyString());
-        Assertions.assertEquals("not found patient with: "+email,patientNotFoundException.getMessage());
+        Assertions.assertEquals("not found patient with: " + email, patientNotFoundException.getMessage());
 //        verifyNoMoreInteractions(patientRepository);
     }
 
@@ -221,6 +221,7 @@ public class PatientServiceTest {
         // then
         verify(patientRepository).save(argThat(new PatientPasswordMatcher(email, newPassword)));
     }
+
     public static class PatientPasswordMatcher implements ArgumentMatcher<Patient> {
         private final String expectedEmail;
         private final String expectedPassword;
