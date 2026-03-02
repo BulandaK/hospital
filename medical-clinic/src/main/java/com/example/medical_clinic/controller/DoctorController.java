@@ -64,6 +64,7 @@ public class DoctorController {
             description = "Register a new Doctor in system",
             responses = {
                     @ApiResponse(responseCode = "201", description = "Doctor created successfully"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
                     @ApiResponse(responseCode = "409", description = "Doctor already exists", content = @Content)
             }
     )

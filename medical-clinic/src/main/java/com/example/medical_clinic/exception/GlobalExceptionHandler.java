@@ -3,6 +3,7 @@ package com.example.medical_clinic.exception;
 import com.example.medical_clinic.DTO.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -14,11 +15,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MedicalClinicException.class)
     public ResponseEntity<ErrorResponse> handleMedicalClinicException(MedicalClinicException ex, HttpServletRequest request) {
+        log.error(ex.getMessage());
         return createResponse(ex, request, ex.getHttpStatus());
     }
 
@@ -28,6 +31,7 @@ public class GlobalExceptionHandler {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining(", "));
 
+        log.error("Validation error: {}",ex.getMessage());
         return createResponse(new Exception(errorMessage), request, HttpStatus.BAD_REQUEST);
     }
 
@@ -36,6 +40,8 @@ public class GlobalExceptionHandler {
         String errorMessage = ex.getAllErrors().stream()
                 .map(MessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining(", "));
+        log.error(ex.getMessage());
+
         return createResponse(new Exception(errorMessage), request, HttpStatus.BAD_REQUEST);
     }
 

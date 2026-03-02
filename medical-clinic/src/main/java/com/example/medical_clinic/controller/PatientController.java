@@ -68,6 +68,7 @@ public class PatientController {
             description = "Creates a new patient account and an associated user profile.",
             responses = {
                     @ApiResponse(responseCode = "201", description = "Patient created successfully"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
                     @ApiResponse(responseCode = "409", description = "Patient with this email already exists")
             }
     )

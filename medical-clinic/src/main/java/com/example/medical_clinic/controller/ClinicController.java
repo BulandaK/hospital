@@ -64,6 +64,7 @@ public class ClinicController {
             description = "Registers a new medical facility in the system.",
             responses = {
                     @ApiResponse(responseCode = "201", description = "Clinic created successfully"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
                     @ApiResponse(responseCode = "409", description = "Clinic already exists", content = @Content)
             }
     )

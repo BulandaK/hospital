@@ -35,16 +35,12 @@ public class PatientService {
 
     public Patient getByEmail(String email) {
         return patientRepository.getByEmail(email)
-                .orElseThrow(() -> {
-                    log.warn("Patient search field: email {} not found", email);
-                    return new PatientNotFoundException("patient with mail " + email + " already exists");
-                });
+                .orElseThrow(() -> new PatientNotFoundException("patient with mail " + email + " already exists"));
     }
 
     @Transactional
     public Patient add(PatientCreateRequest request) {
         if (patientRepository.existsByEmail(request.email())) {
-            log.error("PatientAlreadyExistsException has been thrown for email:{}", request.email());
             throw new PatientAlreadyExistsException("patient already exists!");
         }
         User user = new User(null, request.firstName(), request.lastName(), null, null);
@@ -56,7 +52,6 @@ public class PatientService {
     @Transactional
     public void removeByEmail(String email) {
         if (!patientRepository.existsByEmail(email)) {
-            log.error("Can't delete patient with email: {} that doesn't exists", email);
             throw new PatientNotFoundException("not found patient with: " + email);
         }
         patientRepository.deleteByEmail(email);

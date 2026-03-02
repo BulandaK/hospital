@@ -45,10 +45,7 @@ public class ClinicService {
 
     public Clinic getById(Long id) {
         return clinicRepository.findById(id)
-                .orElseThrow(() -> {
-                    log.warn("Clinic not found with id: " + id);
-                    return new ClinicNotFoundException("Clinic not found with id: " + id);
-                });
+                .orElseThrow(() -> new ClinicNotFoundException("Clinic not found with id: " + id));
     }
 
     @Transactional
@@ -60,7 +57,6 @@ public class ClinicService {
     @Transactional
     public void removeById(Long id) {
         if (!clinicRepository.existsById(id)) {
-            log.error("Cannot delete. Clinic not found with id: {}", id);
             throw new ClinicNotFoundException("Cannot delete. Clinic not found with id: " + id);
         }
         clinicRepository.deleteById(id);
@@ -77,10 +73,7 @@ public class ClinicService {
     public Clinic assignDoctor(Long clinicId, Long doctorId) {
         Clinic clinic = getById(clinicId);
         Doctor doctor = doctorRepository.findById(doctorId)
-                .orElseThrow(() -> {
-                    log.error("Doctor not found with id: {}", doctorId);
-                    return new DoctorNotFoundException("Doctor not found with id: " + doctorId);
-                });
+                .orElseThrow(() -> new DoctorNotFoundException("Doctor not found with id: " + doctorId));
         clinic.getDoctors().add(doctor);
         return clinic;
     }
