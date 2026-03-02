@@ -3,6 +3,7 @@ package com.example.medical_clinic.services;
 import com.example.medical_clinic.DTO.PageResponse;
 import com.example.medical_clinic.DTO.clinic.ClinicDto;
 import com.example.medical_clinic.DTO.clinic.ClinicRequest;
+import com.example.medical_clinic.DTO.clinic.ClinicUpdateRequest;
 import com.example.medical_clinic.exception.clinic.ClinicNotFoundException;
 import com.example.medical_clinic.exception.doctor.DoctorNotFoundException;
 import com.example.medical_clinic.mapper.ClinicMapper;
@@ -11,6 +12,7 @@ import com.example.medical_clinic.model.Doctor;
 import com.example.medical_clinic.repository.ClinicRepository;
 import com.example.medical_clinic.repository.DoctorRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ClinicService {
 
     private final ClinicRepository clinicRepository;
@@ -39,6 +42,7 @@ public class ClinicService {
                 clinicPage.getTotalPages()
         );
     }
+
     public Clinic getById(Long id) {
         return clinicRepository.findById(id)
                 .orElseThrow(() -> new ClinicNotFoundException("Clinic not found with id: " + id));
@@ -46,8 +50,7 @@ public class ClinicService {
 
     @Transactional
     public Clinic add(ClinicRequest request) {
-
-        Clinic clinic = new Clinic(null,request.name(),request.city(), request.postalCode(), request.street(), request.buildingNumber(),null);
+        Clinic clinic = new Clinic(null, request.name(), request.city(), request.postalCode(), request.street(), request.buildingNumber(), null);
         return clinicRepository.save(clinic);
     }
 
@@ -60,7 +63,7 @@ public class ClinicService {
     }
 
     @Transactional
-    public Clinic updateById(Long id, ClinicRequest request) {
+    public Clinic updateById(Long id, ClinicUpdateRequest request) {
         Clinic clinic = getById(id);
         clinic.update(request);
         return clinic;

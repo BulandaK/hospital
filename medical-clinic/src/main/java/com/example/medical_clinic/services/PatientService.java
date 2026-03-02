@@ -11,6 +11,7 @@ import com.example.medical_clinic.model.User;
 import com.example.medical_clinic.repository.PatientRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -20,6 +21,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @EnableTransactionManagement
+@Slf4j
 public class PatientService {
     private final PatientRepository patientRepository;
     private final PatientMapper patientMapper;
@@ -41,8 +43,8 @@ public class PatientService {
         if (patientRepository.existsByEmail(request.email())) {
             throw new PatientAlreadyExistsException("patient already exists!");
         }
-        User user = new User(null,request.firstName(),request.lastName(),null,null);
-        Patient patient = new Patient(null, request.email(), request.password(), request.idCardNo(), request.phoneNumber(), request.birthday(), user, null,null);
+        User user = new User(null, request.firstName(), request.lastName(), null, null);
+        Patient patient = new Patient(null, request.email(), request.password(), request.idCardNo(), request.phoneNumber(), request.birthday(), user, null, null);
         patientRepository.save(patient);
         return patient;
     }

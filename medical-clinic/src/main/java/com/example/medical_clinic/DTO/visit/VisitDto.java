@@ -10,4 +10,5 @@ public record VisitDto(
         String doctorFullName,
         Long patientId,
         String patientFullName
-) {}
+) {
+}

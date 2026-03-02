@@ -10,9 +10,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface VisitRepository extends JpaRepository<Visit,Long> {
+public interface VisitRepository extends JpaRepository<Visit, Long> {
 
     List<Visit> findAllByPatientId(Long patientId);
+
     @Query("SELECT COUNT(v) > 0 FROM Visit v " +
             "WHERE v.doctor.id = :doctorId " +
             "AND :newStart < v.endTime " +

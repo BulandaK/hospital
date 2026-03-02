@@ -13,15 +13,15 @@ public interface VisitMapper {
 
     @Mapping(target = "doctorId", source = "doctor.id")
     @Mapping(target = "patientId", source = "patient.id")
-    @Mapping(target = "doctorFullName", source = "doctor" )
-    @Mapping(target = "patientFullName", source = "patient" )
+    @Mapping(target = "doctorFullName", source = "doctor")
+    @Mapping(target = "patientFullName", source = "patient")
     VisitDto toDto(Visit visit);
 
     default String mapDoctorLastName(Doctor doctor) {
         if (doctor == null || doctor.getUser() == null) {
             return null;
         }
-        return doctor.getUser().getFirstName() + " " +  doctor.getUser().getLastName();
+        return doctor.getUser().getFirstName() + " " + doctor.getUser().getLastName();
     }
 
     default String mapPatientLastName(Patient patient) {
