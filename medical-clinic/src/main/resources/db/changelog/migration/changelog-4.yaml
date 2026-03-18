@@ -1,0 +1,73 @@
+databaseChangeLog:
+  - changeSet:
+      id: 5
+      author: kamil
+      changes:
+        - createTable:
+            tableName: doctors
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: specialization
+                  type: varchar(255)
+              - column:
+                  name: email
+                  type: varchar(255)
+              - column:
+                  name: password
+                  type: varchar(255)
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    unique: true
+                    foreignKeyName: fk_doctors_user
+                    referencedTableName: users
+                    referencedColumnNames: id
+
+  - changeSet:
+      id: 6
+      author: kamil
+      changes:
+        - createTable:
+            tableName: clinic_doctors
+            columns:
+              - column:
+                  name: clinic_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_clinic_doctors_clinic
+                    referencedTableName: clinics
+                    referencedColumnNames: id
+              - column:
+                  name: doctor_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_clinic_doctors_doctor
+                    referencedTableName: doctors
+                    referencedColumnNames: id
+        - addPrimaryKey:
+            tableName: clinic_doctors
+            columnNames: clinic_id, doctor_id
+
+  - changeSet:
+      id: 7
+      author: kamil
+      changes:
+        - addColumn:
+            tableName: patients
+            columns:
+              - column:
+                  name: doctor_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_patients_doctor
+                    referencedTableName: doctors
+                    referencedColumnNames: id

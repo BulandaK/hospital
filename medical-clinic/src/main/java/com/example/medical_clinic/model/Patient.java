@@ -24,7 +24,7 @@ public class Patient {
     private String phoneNumber;
     private LocalDate birthday;
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "USER_ID", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ToString.Exclude
     private User user;
     @ManyToOne

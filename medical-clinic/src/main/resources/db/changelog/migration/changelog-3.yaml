@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: 4
+      author: kamil
+      changes:
+        - createTable:
+            tableName: clinics
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(255)
+              - column:
+                  name: city
+                  type: varchar(255)
+              - column:
+                  name: postal_code
+                  type: varchar(20)
+              - column:
+                  name: street
+                  type: varchar(255)
+              - column:
+                  name: building_number
+                  type: varchar(20)

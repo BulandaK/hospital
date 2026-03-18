@@ -21,7 +21,7 @@ services:
       POSTGRES_PASSWORD: 'pass'
       POSTGRES_DB: 'medical-db'
     ports:
-      - '5432:5432'
+      - '5431:5432'
     networks:
       - my-network
   pgadmin_service:
