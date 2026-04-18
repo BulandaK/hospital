@@ -10,6 +10,7 @@ import com.example.medical_clinic.mapper.DoctorMapper;
 import com.example.medical_clinic.model.Doctor;
 import com.example.medical_clinic.model.User;
 import com.example.medical_clinic.repository.DoctorRepository;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.print.Doc;
 import java.util.List;
 
 @Slf4j
@@ -54,7 +56,7 @@ public class DoctorService {
             throw new DoctorAlreadyExistsException("doctor already exists!");
         }
         User user = new User(null, request.firstName(), request.lastName(), null, null);
-        Doctor doctor = new Doctor(null, request.email(), request.password(), request.specialization(), user, null, null, null);
+        Doctor doctor = new Doctor(null, request.specialization(), request.email(), request.password(), user, null, null, null);
         return doctorRepository.save(doctor);
     }
 
@@ -70,5 +72,12 @@ public class DoctorService {
     public Doctor updateByEmail(String email, DoctorUpdateRequest request) {
         Doctor doctor = getByEmail(email);
         return doctor.update(request);
+    }
+
+    public List<DoctorDto> getBySpecialization(@NotBlank String specialization) {
+        List<Doctor> doctors = doctorRepository.findAllBySpecialization(specialization);
+        return doctors.stream()
+                .map(doctorMapper::toDto)
+                .toList();
     }
 }

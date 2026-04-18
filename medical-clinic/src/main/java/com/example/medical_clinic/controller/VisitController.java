@@ -13,13 +13,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -34,11 +38,21 @@ public class VisitController {
     @GetMapping
     @Operation(
             summary = "Get all visits",
-            description = "Retrieves a paginated list of all available and booked visits in the system."
+            description = "Retrieves a paginated list of all available and booked visits in the system.Can be filtered by doctor, patient, date, specialization, and availability."
     )
-    public PageResponse<VisitDto> getAllVisits(@ParameterObject Pageable pageable) {
-        log.info("Getting all visits");
-        return visitService.getAllVisits(pageable);
+    public PageResponse<VisitDto> getAllVisits(
+            @ParameterObject Pageable pageable,
+            @RequestParam(required = false) Long doctorId,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startRange,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endRange,
+            @RequestParam(required = false) String specialization,
+            @RequestParam(required = false) boolean available
+    ) {
+        log.info("Getting visits with filters - doctorId: {}, startRange: {}, endRange: {}, spec: {},available: {}",
+                doctorId, startRange, endRange, specialization, available);
+        return visitService.getFilteredVisits(pageable, doctorId, startRange, endRange, specialization, available);
     }
 
     @GetMapping("/{patientId}")
@@ -52,8 +66,8 @@ public class VisitController {
     )
     public List<VisitDto> getAllVisitsByPatientId(
             @Parameter(description = "ID of the patient", example = "1")
-            @PathVariable @NotBlank Long patientId) {
-        log.info("Getting visit by patient with ID: {}", patientId);
+            @PathVariable @NotNull Long patientId) {
+        log.info("Getting visits by patient with ID: {}", patientId);
         return visitService.getPatientVisits(patientId);
     }
 
@@ -86,11 +100,26 @@ public class VisitController {
             }
     )
     public VisitDto addPatient(
-            @Parameter(description = "ID of the visit slot", example = "10") @PathVariable @NotBlank Long id,
-            @Parameter(description = "ID of the patient booking the visit", example = "1") @PathVariable @NotBlank Long patientId) {
+            @Parameter(description = "ID of the visit slot", example = "10") @PathVariable @NotNull Long id,
+            @Parameter(description = "ID of the patient booking the visit", example = "1") @PathVariable @NotNull Long patientId) {
         log.info("Adding patient with ID: {}, to visit with id: {}", patientId, id);
         Visit visit = visitService.addPatient(id, patientId);
         log.info("Completed successfully: Adding patient with ID: {}, to visit with id: {}", patientId, id);
         return visitMapper.toDto(visit);
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(
+            summary = "Delete a visit",
+            description = "delete a visit with provided id",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Visit removed successfully"),
+                    @ApiResponse(responseCode = "404", description = "Visit not found", content = @Content)
+            }
+    )
+    public void deleteVisit(@Parameter(description = "ID of the visit slot", example = "10") @PathVariable Long id) {
+        log.info("Deleting visit with ID: {}", id);
+        visitService.deleteVisit(id);
+        log.info("visit with ID: {}, deleted successfully", id);
     }
 }

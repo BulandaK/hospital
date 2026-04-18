@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining(", "));
 
-        log.error("Validation error: {}",ex.getMessage());
+        log.error("Validation error: {}", ex.getMessage());
         return createResponse(new Exception(errorMessage), request, HttpStatus.BAD_REQUEST);
     }
 

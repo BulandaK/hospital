@@ -24,7 +24,7 @@ databaseChangeLog:
                   name: password
                   type: varchar(255)
               - column:
-                 name: idCardNo
+                 name: id_card_no
                  type: varchar(255)
                  constraints:
                    unique: true

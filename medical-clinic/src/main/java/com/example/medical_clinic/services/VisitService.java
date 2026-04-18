@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -32,12 +33,13 @@ public class VisitService {
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
 
-    public PageResponse<VisitDto> getAllVisits(Pageable pageable) {
-        Page<Visit> page = visitRepository.findAll(pageable);
+
+    public PageResponse<VisitDto> getFilteredVisits(Pageable pageable, Long doctorId, LocalDateTime startRange, LocalDateTime endRange, String specialization, boolean available) {
+        LocalDateTime now = available ? LocalDateTime.now() : null;
+        Page<Visit> page = visitRepository.findAvailableVisits(pageable, doctorId, startRange, endRange, specialization, now);
         List<VisitDto> content = page.stream()
                 .map(visitMapper::toDto)
                 .toList();
-
         return new PageResponse<>(content, page.getNumber(), page.getSize(), page.getTotalElements(), page.getTotalPages());
     }
 
@@ -81,6 +83,15 @@ public class VisitService {
 
         visit.setPatient(patient);
         return visit;
+    }
+    @Transactional
+    public void deleteVisit(Long visitId) {
+        Visit visit = visitRepository.findById(visitId)
+                .orElseThrow(() -> {
+                    log.error("Visit can't be deleted: Visit ID: {} not found", visitId);
+                    return new VisitNotFoundException("Visit not found");
+                });
+        visitRepository.delete(visit);
     }
 
     private void validateTimeSlot(LocalDateTime date) {

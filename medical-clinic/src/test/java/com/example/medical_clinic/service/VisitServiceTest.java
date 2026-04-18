@@ -10,6 +10,7 @@ import com.example.medical_clinic.repository.DoctorRepository;
 import com.example.medical_clinic.repository.PatientRepository;
 import com.example.medical_clinic.repository.VisitRepository;
 import com.example.medical_clinic.services.VisitService;
+import net.bytebuddy.asm.Advice;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 public class VisitServiceTest {
@@ -53,9 +54,15 @@ public class VisitServiceTest {
         visit2.setId(2L);
         List<Visit> visits = List.of(visit1, visit2);
         Page<Visit> visitPage = new PageImpl<>(visits, pageable, visits.size());
-        when(visitRepository.findAll(pageable)).thenReturn(visitPage);
+        when(visitRepository.findAvailableVisits(
+                eq(pageable),
+                isNull(),
+                isNull(),
+                isNull(),
+                isNull(),
+                any(LocalDateTime.class))).thenReturn(visitPage);
         // when
-        PageResponse<VisitDto> result = visitService.getAllVisits(pageable);
+        PageResponse<VisitDto> result = visitService.getFilteredVisits(pageable, null, null, null, null,true);
         // then
         Assertions.assertAll(
                 () -> Assertions.assertNotNull(result),

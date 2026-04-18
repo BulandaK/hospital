@@ -57,6 +57,21 @@ public class DoctorController {
         return doctorMapper.toDto(doctor);
     }
 
+    @GetMapping("/specialization/{specialization}")
+    @Operation(
+            summary = "Get a list of doctors by specialization",
+            description = "Returns detailed information about a doctors using its specialization",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Doctor found successfully"),
+                    @ApiResponse(responseCode = "404", description = "Doctor not found with provided ", content = @Content)
+            }
+    )
+    public List<DoctorDto> getBySpecialization(@PathVariable @NotBlank String specialization) {
+        List<DoctorDto> doctors = doctorService.getBySpecialization(specialization);
+        log.info("Doctors list with specialization: {}", specialization);
+        return doctors;
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(
